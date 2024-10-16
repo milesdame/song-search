@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
 
@@ -15,22 +15,21 @@ def search():
     sort = req["sortBy"]
     term = req["term"]
 
-    song_dict = get(stype, explicit, songs, term)
-    
-    if sort == 'duration':
-       return jsonify(sort_by_duration(song_dict))
-    elif sort == 'popularity':
-       return jsonify(sort_by_popularity(song_dict))
-    
-    return jsonify(dict())
-   
-def get(type, expl, tracks, term):
+   ## filter
    filtered = []
-   for song in tracks:
-      if term in song[type] and expl == song[expl]:
+   for song in songs:
+      if term in song[type] and explicit == song[explicit]:
          filtered.add(song)
 
-   return filtered
+   song_dict = filtered
+   ##song_dict = get(stype, explicit, songs, term)
+    
+   ## sort
+   song_dict = sorted(song_dict, key=lambda song: song[sort])
+   
+
+   ## return
+   return song_dict   
    
 
 

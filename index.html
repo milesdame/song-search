@@ -4,11 +4,17 @@
     <title>Song Search</title>
     <script>
         async function search() {
-            let searchBy = document.getElementsByName("searchBy")[0].value;
+            console.log("begin of script")
 
-            let explicit = document.getElementById("explicit")[0].checked;
+            let searchBy = document.getElementsByName("searchBy")[0].value;
+            let explicit = document.getElementsByName("explicit")[0].checked;
             let sortBy = document.getElementsByName("sortBy")[0].value;
             let searchTerm = document.getElementsByName("searchTerm")[0].value;
+
+            console.log("search by" + searchBy)
+            console.log("explicit?" + explicit)
+            console.log("sort by" + sortBy)
+            console.log("search term" + searchTerm)
 
             // ajax
             const postHeaders = new Headers();
@@ -24,10 +30,8 @@
                 headers: postHeaders
             });
             const response = await prom.json();
-            
 
-
-
+            console.log("end of script")
         }
     </script>
 </head>
@@ -53,10 +57,10 @@
         Include explicit songs?
         <input type="checkbox" name="explicit" value="explicit" checked>
     </p>
-    <form>
+    <p>
         <input type="text" name="searchTerm" id="searchTerm" placeholder="Enter your search terms...">
-        <input type="submit" value="Submit">
-    </form>
+        <button onclick="search()">Submit</button>
+    </p>
 </body>
 
 </html>
