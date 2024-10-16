@@ -2,6 +2,34 @@
 
 <head>
     <title>Song Search</title>
+    <script>
+        async function search() {
+            let searchBy = document.getElementsByName("searchBy")[0].value;
+
+            let explicit = document.getElementById("explicit")[0].checked;
+            let sortBy = document.getElementsByName("sortBy")[0].value;
+            let searchTerm = document.getElementsByName("searchTerm")[0].value;
+
+            // ajax
+            const postHeaders = new Headers();
+            postHeaders.append("Content-Type", "application/json")
+            const prom = await fetch("/index", {
+                method: "POST",
+                body: JSON.stringify({
+                    "searchBy": searchBy,
+                    "explicit": explicit,
+                    "sortBy": sortBy,
+                    "term": searchTerm
+                }),
+                headers: postHeaders
+            });
+            const response = await prom.json();
+            
+
+
+
+        }
+    </script>
 </head>
 
 <body>
