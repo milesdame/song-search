@@ -11,15 +11,15 @@ def search():
     songs = json.load(f)
     req = request.json
     stype = req["searchBy"]
-    explicit = req["explicit"]
+    expl = req["explicit"]
     sort = req["sortBy"]
     term = req["term"]
 
    ## filter
    filtered = []
    for song in songs:
-      if term in song[type] and explicit == song[explicit]:
-         filtered.add(song)
+      if (term in song[stype] or song[stype].find(term) != -1) and expl == song["explicit"]:
+         filtered.append(song)
 
    song_dict = filtered
    ##song_dict = get(stype, explicit, songs, term)
@@ -29,7 +29,7 @@ def search():
    
 
    ## return
-   return song_dict   
+   return jsonify(song_dict)   
    
 
 

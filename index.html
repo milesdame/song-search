@@ -4,22 +4,19 @@
     <title>Song Search</title>
     <script>
         async function search() {
-            console.log("begin of script")
-
             let searchBy = document.getElementsByName("searchBy")[0].value;
             let explicit = document.getElementsByName("explicit")[0].checked;
             let sortBy = document.getElementsByName("sortBy")[0].value;
             let searchTerm = document.getElementsByName("searchTerm")[0].value;
 
-            console.log("search by" + searchBy)
-            console.log("explicit?" + explicit)
-            console.log("sort by" + sortBy)
-            console.log("search term" + searchTerm)
+            searchTerm.value = "";
+            let div = document.getElementById("list");
+            div.innerHTML = "";
 
             // ajax
             const postHeaders = new Headers();
-            postHeaders.append("Content-Type", "application/json")
-            const prom = await fetch("/index", {
+            postHeaders.append("Content-Type", "application/json");
+            const prom = await fetch("http://127.0.0.1:5000/index", {
                 method: "POST",
                 body: JSON.stringify({
                     "searchBy": searchBy,
@@ -29,10 +26,51 @@
                 }),
                 headers: postHeaders
             });
+
             const response = await prom.json();
 
-            console.log("end of script")
+            let endP = document.createElement("p");
+            let end = "No songs found (better luck next time)";
+
+            for (item in response) {
+                let song = response[item];
+
+                // line for formatting
+                let line = document.createElement("hr");
+                div.appendChild(line);
+
+                //song info, starting with name and artist
+                let nameArtist = document.createElement("p");
+                let content = song["title"].toString() + " by " + song["artists"].join(", ") + " (" + song["duration_mins"] + " m)";
+                nameArtist.appendChild(document.createTextNode(content));
+                div.appendChild(nameArtist);
+
+                // genres list
+                let genres = document.createElement("p");
+                content = "Genres: " + song["genres"].join(", ");
+                genres.appendChild(document.createTextNode(content));
+                div.appendChild(genres);
+
+                // pop score
+                let pop = document.createElement("p");
+                content = "Popularity Score: " + song["popularity"];
+                pop.appendChild(document.createTextNode(content));
+                div.appendChild(pop)
+
+                // link to spotify
+                let link = document.createElement("a");
+                link.href = song["url"];
+                content = "Listen on Spotify Here!"
+                link.appendChild(document.createTextNode(content));
+                div.appendChild(link)
+
+                end = "Try another search!"
+            }
+
+            endP.appendChild(document.createTextNode(end));
+            div.appendChild(endP);
         }
+
     </script>
 </head>
 
@@ -42,15 +80,15 @@
         Search by:
         <select name="searchBy" id="searchBy">
             <option value="title">Title</option>
-            <option value="artist">Artist</option>
-            <option value="genre">Genre</option>
+            <option value="artists">Artist</option>
+            <option value="genres">Genre</option>
         </select>
     </p>
     <p>
         Sort by:
         <select name="sortBy" id="sortBy">
             <option value="popularity">Popularity</option>
-            <option value="duration">Duration</option>
+            <option value="duration_mins">Duration</option>
         </select>
     </p>
     <p>
@@ -61,6 +99,7 @@
         <input type="text" name="searchTerm" id="searchTerm" placeholder="Enter your search terms...">
         <button onclick="search()">Submit</button>
     </p>
+    <div id="list"></div>
 </body>
 
 </html>
